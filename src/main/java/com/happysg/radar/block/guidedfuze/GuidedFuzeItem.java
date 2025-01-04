@@ -40,11 +40,12 @@ public class GuidedFuzeItem extends FuzeItem {
         Vec3 delta = projectile.getDeltaMovement();
         if (tag.contains("monitorPos")) {
             BlockPos monitorPos = NbtUtils.readBlockPos(tag.getCompound("monitorPos"));
-            if (delta.y > 0)
-                return false;
+
             if (projectile.level().getBlockEntity(monitorPos) instanceof MonitorBlockEntity monitor) {
                 Vec3 target = monitor.getTargetPos();
                 if (target == null)
+                    return false;
+                if (delta.y > 0 && projectile.position().y < target.y + 150)
                     return false;
                 double horizontalDistance = Math.sqrt(Math.pow(projectile.position().x - target.x, 2) + Math.pow(projectile.position().z - target.z, 2));
                 if (Math.abs(projectile.position().y - target.y) > horizontalDistance / 2 || tag.contains("valid")) {
