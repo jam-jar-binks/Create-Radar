@@ -40,6 +40,7 @@ public class ModCreativeTabs {
         pOutput.accept(ModBlocks.RADAR_DISH_BLOCK);
         pOutput.accept(ModBlocks.AUTO_YAW_CONTROLLER_BLOCK);
         pOutput.accept(ModBlocks.AUTO_PITCH_CONTROLLER_BLOCK);
+        pOutput.accept(ModItems.GUIDED_FUZE);
     }
 
 

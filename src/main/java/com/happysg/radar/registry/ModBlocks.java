@@ -39,6 +39,7 @@ public class ModBlocks {
                     .build()
                     .register();
 
+
     public static final BlockEntry<RadarBearingBlock> RADAR_BEARING_BLOCK =
             REGISTRATE.block("radar_bearing", RadarBearingBlock::new)
                     .initialProperties(SharedProperties::softMetal)

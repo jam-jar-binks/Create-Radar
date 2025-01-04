@@ -17,6 +17,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import org.joml.Vector3f;
+import org.valkyrienskies.core.api.ships.Ship;
 
 import java.util.*;
 
@@ -26,6 +28,8 @@ public class RadarBearingBlockEntity extends MechanicalBearingBlockEntity {
     private int dishCount;
     private Direction receiverFacing = Direction.NORTH;
     Map<UUID, RadarTrack> entityPositions = new HashMap<>();
+    Map<Long, RadarTrack> shipPositions = new HashMap<>();
+
     public RadarBearingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
@@ -42,8 +46,15 @@ public class RadarBearingBlockEntity extends MechanicalBearingBlockEntity {
         super.tick();
         if (isRunning()) {
             scanForEntityTracks();
+            // scanForShips();
         }
         clearOldTracks();
+    }
+
+    private void scanForShips() {
+        if (level.isClientSide)
+            return;
+
     }
 
     private void clearOldTracks() {
@@ -55,8 +66,8 @@ public class RadarBearingBlockEntity extends MechanicalBearingBlockEntity {
         });
         toRemove.forEach(uuid -> {
             entityPositions.remove(uuid);
-            notifyUpdate();
         });
+        notifyUpdate();
     }
 
     private void scanForEntityTracks() {
@@ -64,9 +75,9 @@ public class RadarBearingBlockEntity extends MechanicalBearingBlockEntity {
         level.getEntities(null, aabb).stream().filter(this::isEntityInRadarFov).filter(Entity::isAlive).forEach(
                 entity -> {
                     entityPositions.put(entity.getUUID(), new RadarTrack(entity));
-                    notifyUpdate();
                 }
         );
+        notifyUpdate();
     }
 
 
@@ -90,6 +101,25 @@ public class RadarBearingBlockEntity extends MechanicalBearingBlockEntity {
         // Check if the entity is within the field of view
         return relativeAngle <= fovDegrees / 2;
     }
+
+    private boolean isShipInRadarFov(Ship ship) {
+        float radarAngle = getGlobalAngle();
+        Vector3f shipPos = ship.getWorldAABB().center(new Vector3f());
+        BlockPos entityPos = new BlockPos((int) shipPos.x(), (int) shipPos.y(), (int) shipPos.z());
+        double fovDegrees = 90;
+        BlockPos radarPos = VS2Utils.getWorldPos(this);
+
+        // Calculate the angle between the radar and the entity
+        double angleToEntity = Math.toDegrees(Math.atan2(entityPos.getX() - radarPos.getX(), radarPos.getZ() - entityPos.getZ()));
+        if (angleToEntity < 0) {
+            angleToEntity += 360;
+        }
+        double relativeAngle = Math.abs(angleToEntity - radarAngle);
+
+        // Check if the entity is within the field of view
+        return relativeAngle <= fovDegrees / 2;
+    }
+
 
     public float getGlobalAngle() {
         return (receiverFacing.toYRot() - angle + 360) % 360;

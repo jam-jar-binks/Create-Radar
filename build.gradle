@@ -137,6 +137,10 @@ dependencies {
     compileOnly fg.deobf("maven.modrinth:create-clockwork:${minecraft_version}-${clockwork_version}")
 
 
+    //create air wars
+    implementation fg.deobf("curse.maven:create-the-air-war-1165250:6036977")
+
+
     implementation("org.valkyrienskies.core:api:${vs_core_version}")
     implementation("org.valkyrienskies.core:impl:${vs_core_version}")
     implementation("org.valkyrienskies.core:api-game:${vs_core_version}")

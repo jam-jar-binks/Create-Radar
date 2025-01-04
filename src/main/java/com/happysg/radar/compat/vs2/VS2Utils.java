@@ -6,8 +6,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.joml.Vector3d;
 import org.valkyrienskies.core.api.ships.LoadedShip;
+import org.valkyrienskies.core.api.ships.Ship;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
+
+import java.util.List;
 
 public class VS2Utils {
 
@@ -26,6 +29,12 @@ public class VS2Utils {
 
     public static BlockPos getWorldPos(BlockEntity blockEntity) {
         return getWorldPos(blockEntity.getLevel(), blockEntity.getBlockPos());
+    }
+
+    public static List<Ship> getLoadedShips(Level level) {
+        if (!Mods.VALKYRIENSKIES.isLoaded())
+            return List.of();
+        return VSGameUtilsKt.getAllShips(level).stream().toList();
     }
 
 }

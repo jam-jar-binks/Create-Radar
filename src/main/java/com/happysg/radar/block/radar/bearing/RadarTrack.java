@@ -32,6 +32,7 @@ public record RadarTrack(UUID entityId, Vec3 position, long scannedTime, Color c
         this(entity.getUUID(), getPosition(entity), entity.level().getGameTime(), getColor(entity), isContraption(entity), entity.getId(), getEntityType(entity));
     }
 
+
     private static EntityType getEntityType(Entity entity) {
         if (entity instanceof Player)
             return EntityType.PLAYER;
